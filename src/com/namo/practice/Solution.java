@@ -24,7 +24,7 @@ public class Solution {
         //设置根节点
         TreeNode root = null;
         //队列
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
         //创建根节点
         if (treeArr.length > 0) {
             root = new TreeNode(treeArr[0]);
