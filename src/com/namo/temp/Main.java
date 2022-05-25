@@ -42,7 +42,7 @@ public class Main {
      * @return int整型
      */
     public int lengthOfMaxQueue(ArrayList<Integer> nums) {
-
+        return 0;
     }
 
 }
