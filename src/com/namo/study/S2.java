@@ -24,9 +24,9 @@ public class S2 {
 
     @Test
     public void mainTest(){
-        Assert.assertTrue(repeatedSubstringPattern(testStrings[0]));
-        Assert.assertFalse(repeatedSubstringPattern(testStrings[1]));
-        Assert.assertTrue(repeatedSubstringPattern(testStrings[2]));
+        Assert.assertTrue("abab",repeatedSubstringPattern(testStrings[0]));
+        Assert.assertFalse("aba",repeatedSubstringPattern(testStrings[1]));
+        Assert.assertTrue( "abcabcabcabc",repeatedSubstringPattern(testStrings[2]));
 
     }
 
@@ -38,19 +38,18 @@ public class S2 {
 
 
     public boolean repeatedSubstringPattern(String s) {
-        for (int i = 0; i < s.length()/2; i++) {
-            String temp = s.substring(0,i+1);
-            String[] split = s.split(temp);
-            if (split.length == 0){
-                return true;
-            }
-            for (int j = 0; j < split.length; j++) {
-                if (split[j].equals("") == true){
-                    continue;
-                }else if(j == split.length){
+        int n = s.length();
+        for (int i = 1; i * 2 <= n; ++i) {
+            if (n % i == 0) {
+                boolean match = true;
+                for (int j = i; j < n; ++j) {
+                    if (s.charAt(j) != s.charAt(j - i)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
                     return true;
-                } else {
-                    break;
                 }
             }
         }
