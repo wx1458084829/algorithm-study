@@ -71,5 +71,15 @@ public class Problem1108 {
         return stringBuilder.toString();
     }
 
+    /**
+     * 直接replace
+     * @param address
+     * @return
+     */
+    public String defangIPaddr2(String address) {
+        return address.replace(".","[.]");
+    }
+
+
     //todo 题解解决方案
 }
