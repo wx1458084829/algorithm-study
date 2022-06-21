@@ -48,5 +48,51 @@ public class Main {
         return 0;
     }
 
-
+    @Test
+    public void fapai() {
+        // 存储108张牌的数组
+        int[] total = new int[108];
+        // 存储四个玩家的牌
+        int[][] player = new int[4][25];
+        // 存储当前剩余牌的数量
+        int leftNum = 108;
+        // 随机数字
+        int ranNumber;
+        // 随机对象
+        Random random = new Random();
+        // 初始化数组
+        for (int i = 0; i < total.length; i++) {
+            total[i] = (i + 1) % 54;
+            //处理大小王编号
+            if (total[i] == 0) {
+                total[i] = 54;
+            }
+        }
+        // 循环发牌
+        for (int i = 0; i < 25; i++) {
+            //为每个人发牌
+            for (int j = 0; j < player.length; j++) {
+                //生成随机下标
+                ranNumber = random.nextInt(leftNum);
+                //发牌
+                player[j][i] = total[ranNumber];
+                //移动已经发过的牌
+                total[ranNumber] = total[leftNum - 1];
+                //可发牌的数量减少1
+                leftNum--;
+            }
+        }
+        // 循环输出玩家手中的牌
+        for (int i = 0; i < player.length; i++) {
+            for (int j = 0; j < player[i].length; j++) {
+                System.out.print(" " + player[i][j]);
+            }
+            System.out.println();
+        }
+        // 底牌
+        for (int i = 0; i < 8; i++) {
+            System.out.print(" " + total[i]);
+        }
+        System.out.println();
+    }
 }
