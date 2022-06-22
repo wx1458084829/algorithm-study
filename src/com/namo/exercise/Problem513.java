@@ -1,6 +1,10 @@
 package com.namo.exercise;
 
+import com.namo.base.TreeNode;
 import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * 513. 找树左下角的值
@@ -46,7 +50,27 @@ public class Problem513 {
      * @return
      */
     public int findBottomLeftValue(TreeNode root) {
-        return 0;
+        int leftNumber = 0;
+        Queue<TreeNode> nodeQueue = new LinkedList<>();
+        nodeQueue.offer(root);
+        // 处理单个节点的情况
+        leftNumber = root.val;
+        while (!nodeQueue.isEmpty()) {
+            TreeNode tempNode = nodeQueue.poll();
+            if (tempNode.right != null) {
+                nodeQueue.offer(tempNode.right);
+            }
+            // 特殊情况，[1,null,-1] 结果为 -1
+            if (tempNode.right != null&&tempNode.left == null){
+                leftNumber = tempNode.right.val;
+            }
+            if (tempNode.left != null) {
+                nodeQueue.offer(tempNode.left);
+                leftNumber = tempNode.left.val;
+            }
+
+        }
+        return leftNumber;
     }
 
 
@@ -65,28 +89,5 @@ public class Problem513 {
      */
 
 
-}
-
-
-/**
- * 树节点
- */
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-
-    TreeNode() {
-    }
-
-    TreeNode(int val) {
-        this.val = val;
-    }
-
-    TreeNode(int val, TreeNode left, TreeNode right) {
-        this.val = val;
-        this.left = left;
-        this.right = right;
-    }
 }
 
