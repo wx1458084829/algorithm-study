@@ -2,9 +2,7 @@ package com.namo.exercise;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author namo
@@ -13,36 +11,108 @@ import java.util.TreeSet;
 public class Problem30 {
     @Test
     public void case30() {
-        String a = "123";
-        String b = "23";
-        int i = a.indexOf(b);
-        System.out.println(i);
+        List<Integer> barfoothefoobarman = findSubstring("thefoobarman", new String[]{"bar", "foo", "the"});
+        System.out.println(barfoothefoobarman);
     }
 
-
+    /**
+     * 采用滑动窗口算法解决问题
+     * 存储字符串采用Map存储
+     * @param s
+     * @param words
+     * @return
+     */
     public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> res = new ArrayList<>();
+        Map<String, Integer> tempNum = new HashMap<>();
+        for (String word : words) {
+            if (tempNum.get(word) == null) {
+                tempNum.put(word, 1);
+            } else {
+                tempNum.put(word, tempNum.get(word) + 1);
+            }
+        }
 
+        char[] sChars = s.toCharArray();
+        for (int i = 0; i < sChars.length - (words[0].length() * words.length) + 1; i++) {
+            Map<String, Integer> numMap = new HashMap<>();
+            numMap.putAll(tempNum);
+            char[] windowChars = Arrays.copyOfRange(sChars, i, i + (words[0].length() * words.length));
+            String windowString = String.valueOf(windowChars);
+            for (int j = 0; j < windowString.length(); j = j + words[0].length()) {
+                String tempSubString = windowString.substring(j, j + words[0].length());
+                if (numMap.get(tempSubString) == null) {
+                    break;
+                }
+                Integer subCount = numMap.get(tempSubString);
+                subCount = subCount - 1;
 
-        return null;
+                if (subCount == 0) {
+                    numMap.remove(tempSubString);
+                } else {
+                    numMap.put(tempSubString, subCount);
+                }
+            }
+            if (numMap.isEmpty() == true) {
+                res.add(i);
+            }
+        }
+        return res;
     }
+
+
+//    /**
+//     * 有bug
+//     * @param s
+//     * @param words
+//     * @return
+//     */
+//    public List<Integer> findSubstring(String s, String[] words) {
+//        List<Integer> res= new ArrayList<>();
+//        String wordsString = "";
+//        for (String word : words) {
+//            wordsString += word;
+//        }
+//        char[] wordsChars = wordsString.toCharArray();
+//        char[] sChars = s.toCharArray();
+//        for (int i = 0; i < sChars.length - wordsChars.length + 1; i++) {
+//            System.out.println(Arrays.copyOfRange(sChars, i, i + wordsChars.length));
+//            //
+//            boolean sub = isSub(Arrays.copyOfRange(sChars, i, i + wordsChars.length), wordsChars);
+//            if (sub){
+//                res.add(i);
+//            }
+//        }
+//        return res;
+//    }
+//
+//    private boolean isSub(char[] ch1, char[] ch2) {
+////        Map<Character, Integer> tempMap = new HashMap<>();
+//        int count = 0;
+//        for (int i = 0; i < ch1.length; i++) {
+//            count += (ch1[i] - ch2[i]);
+//        }
+//        return count == 0 ? true : false;
+//    }
+
 
     private void perm(char[] chars, int begin, TreeSet<String> treeSet) {
-        if (chars == null || chars.length == 0 || begin > chars.length-1) {
+        if (chars == null || chars.length == 0 || begin > chars.length - 1) {
             return;
         }
-        if (begin == chars.length-1) {
+        if (begin == chars.length - 1) {
             treeSet.add(String.valueOf(chars));
             return;
         }
         for (int i = begin; i < chars.length; i++) {
             swap(chars, begin, i);
-            perm(chars, begin+1, treeSet);
+            perm(chars, begin + 1, treeSet);
             swap(chars, begin, i);
         }
     }
 
     @Test
-    public void testA(){
+    public void testA() {
         List<String> list = findPermutation("absadasdasda");
         System.out.println(list);
     }
