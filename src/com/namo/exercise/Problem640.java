@@ -1,5 +1,7 @@
 package com.namo.exercise;
 
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Array;
@@ -16,24 +18,50 @@ public class Problem640 {
     @Test
     public void test1() {
         String s = solveEquation("x+5-3+x=6+x-2");
-        System.out.println(s);
-    }
-    @Test
-    public void test2() {
-        String s = solveEquation("x=x");
-        System.out.println(s);
-    }
-    @Test
-    public void test3() {
-        String s = solveEquation("2x=x");
+        String res = "x=2";
+        Assert.assertEquals(s,res);
         System.out.println(s);
     }
 
     @Test
-    public void test4(){
-        String s = "+2x+5-3+x";
+    public void test2() {
+        String s = solveEquation("x=x");
+        String res = "Infinite solutions";
+        Assert.assertEquals(s,res);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test3() {
+        String s = solveEquation("2x=x");
+        String res = "x=0";
+        Assert.assertEquals(s,res);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test4() {
+        String s = solveEquation("-x=-1");
+        String res = "x=1";
+        Assert.assertEquals(s,res);
+        System.out.println(s);
+    }
+
+    @Test
+    public void test5() {
+        String s = solveEquation("-x=1");
+        String res = "x=-1";
+        Assert.assertEquals(s,res);
+        System.out.println(s);
+    }
+
+
+    @Test
+    @Ignore
+    public void myTest() {
+        String s = "+2000x+5-3+x";
         //(\+([1-9])?(x)?)|(-([1-9])?(x)?)
-        Pattern pattern = Pattern.compile("(\\+|-)([1-9])?(x)?",Pattern.UNICODE_CASE);
+        Pattern pattern = Pattern.compile("(\\+|-)([0-9]){0,100}(x)?", Pattern.UNICODE_CASE);
         Matcher matcher = pattern.matcher(s);
 
         while (matcher.find()) {
@@ -46,63 +74,100 @@ public class Problem640 {
 
     }
 
+    /**
+     * 640. 求解方程
+     *
+     * @param equation
+     * @return
+     */
     public String solveEquation(String equation) {
-        int equalIndex = equation.indexOf("=");
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(equation.substring(0, equalIndex));
-        stringBuffer.reverse();
-        stringBuffer.append("+");
-        stringBuffer.reverse();
-        char[] leftEquation = stringBuffer.toString().toCharArray();
-        stringBuffer.delete(0, stringBuffer.length());
-
-        stringBuffer.append(equation.substring(equalIndex + 1, equation.length()));
-        stringBuffer.reverse();
-        stringBuffer.append("+");
-        stringBuffer.reverse();
-        char[] rightEquation = stringBuffer.toString().toCharArray();
-
         int xSymbol = 0;
         int rightSymbol = 0;
-
-        System.out.println(leftEquation);
-        System.out.println(rightEquation);
-
-        for (int i = 0; i < leftEquation.length; i=i+2) {
-            if (leftEquation[i+1] == 'x') {
-                if (leftEquation[i] == '+'){
-                    xSymbol+=1;
-                }else {
-                    xSymbol-=1;
+//        获取分割字符'='的位置
+        int equalIndex = equation.indexOf("=");
+//        左表达式字符串
+        StringBuffer leftStr = new StringBuffer(equation.substring(0, equalIndex));
+//        特殊情况，当表达式为x=2这种情况下需要手动加上+，即+x=2，以便和-x=2这种情况一样，便于进行一般化处理
+        if (leftStr.charAt(0) != '-') {
+            leftStr.reverse();
+            leftStr.append("+");
+            leftStr.reverse();
+        }
+        StringBuffer rightStr = new StringBuffer(equation.substring(equalIndex + 1, equation.length()));
+        if (rightStr.charAt(0) != '-') {
+            rightStr.reverse();
+            rightStr.append("+");
+            rightStr.reverse();
+        }
+//        正则表达式匹配规则
+        String regexStr = "(\\+|-)([0-9]){0,100}(x)?";
+        Pattern pattern = Pattern.compile(regexStr);
+//        左匹配
+        Matcher leftMatcher = pattern.matcher(leftStr);
+        while (leftMatcher.find()) {
+//            获得匹配结果
+            String strItem = leftMatcher.group();
+//            判断是系数还是值
+            if (strItem.indexOf("x") == -1) {
+//                判断正负值
+                if (strItem.indexOf("+") == -1) {
+                    rightSymbol += new Integer(strItem.substring(1));
+                } else {
+                    rightSymbol -= new Integer(strItem.substring(1));
                 }
-            } else  {
-                if (leftEquation[i] == '+'){
-                    rightSymbol-=new Integer(leftEquation[i+1]);
-                }else {
-                    rightSymbol+=new Integer(leftEquation[i+1]);
+            } else {
+                if (strItem.indexOf("+") == -1) {
+                    if (strItem.length() == 2) {
+                        xSymbol -= 1;
+                    } else {
+                        xSymbol -= new Integer(strItem.substring(1, strItem.length() - 1));
+                    }
+
+                } else {
+                    if (strItem.length() == 2) {
+                        xSymbol += 1;
+                    } else {
+                        xSymbol += new Integer(strItem.substring(1, strItem.length() - 1));
+                    }
                 }
             }
         }
 
-        for (int i = 0; i < rightEquation.length; i=i+2) {
-            if (rightEquation[i+1] == 'x') {
-                if (rightEquation[i] == '+'){
-                    xSymbol-=1;
-                }else {
-                    xSymbol+=1;
+        Matcher rightMatcher = pattern.matcher(rightStr);
+        while (rightMatcher.find()) {
+            String strItem = rightMatcher.group();
+            if (strItem.indexOf("x") == -1) {
+                if (strItem.indexOf("+") == -1) {
+                    rightSymbol -= new Integer(strItem.substring(1));
+                } else {
+                    rightSymbol += new Integer(strItem.substring(1));
                 }
-            } else  {
-                if (rightEquation[i] == '+'){
-                    rightSymbol+=new Integer(rightEquation[i+1]);
-                }else {
-                    rightSymbol-=new Integer(rightEquation[i+1]);
+            } else {
+                if (strItem.indexOf("+") == -1) {
+                    if (strItem.length() == 2) {
+                        xSymbol += 1;
+                    } else {
+                        xSymbol += new Integer(strItem.substring(1, strItem.length() - 1));
+                    }
+
+                } else {
+                    if (strItem.length() == 2) {
+                        xSymbol -= 1;
+                    } else {
+                        xSymbol -= new Integer(strItem.substring(1, strItem.length() - 1));
+                    }
                 }
             }
         }
-
-        if (xSymbol == 0){
+//        左右均为0，说明有无限解
+        if (xSymbol == 0 && rightSymbol == 0) {
             return "Infinite solutions";
         }
-        return String.valueOf((int)rightSymbol/xSymbol);
+//        x为0，说明无解
+        if (xSymbol == 0) {
+            return "No solution";
+        }
+//        构造返回
+        return "x=" + String.valueOf((int) rightSymbol / xSymbol);
     }
 }
